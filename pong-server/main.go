@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,10 +20,14 @@ func getPong(c *gin.Context) {
 }
 
 func processAircraft(c *gin.Context) {
+
 	var request AircraftRequest
 	if err := c.BindJSON(&request); err != nil {
+		log.Println("Bad JSON!")
 		return
 	}
 
-	fmt.Printf("Process request: timestamp=%f messages=%d\n", request.Now, request.Messages)
+	log.Printf("Process request: timestamp=%f messages=%d aircraft=%d\n", request.Now, request.Messages, len(request.Aircraft))
+
+	c.IndentedJSON(http.StatusOK, "Processed")
 }
