@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -73,7 +75,7 @@ func loopForever(server string, chWhenDone chan<- bool, chStopRequested <-chan b
 
 		case <-chDoneSleeping:
 			var json string = getAircraft(server)
-			fmt.Printf("%v\n", json)
+			postAircraft("http://localhost:6543", json)
 		}
 	}
 	chWhenDone <- true
@@ -99,4 +101,25 @@ func getAircraft(server string) string {
 
 	sb := string(body)
 	return sb
+}
+
+func postAircraft(server string, json string) {
+	var url string = server + "/aircraft"
+
+	var body = []byte(json)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		panic(err)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	respBody, _ := ioutil.ReadAll(resp.Body)
+	fmt.Printf("response url=%v status=%v body=%v\n", url, resp.Status, respBody)
 }
