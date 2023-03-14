@@ -6,6 +6,11 @@ type AircraftRequest struct {
 	Aircraft []Aircraft `json:"aircraft"`
 }
 
+type MetaData struct {
+	MessageCount  int
+	AircraftCount int
+}
+
 type Aircraft struct {
 	Hex string `json:"hex"`
 	// AltBaro int    `json:"alt_baro,omitempty"`

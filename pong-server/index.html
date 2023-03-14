@@ -1,0 +1,44 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aircraft Stuff</title>
+</head>
+
+<body>
+    <h1>Aircraft Count</h1>
+
+    <p id="aircraftCount" style="font-size:40px;">Loading aircraft count...</p>
+
+    <h1>Messages</h1>
+    <p id="messageCount" style="font-size:40px;">Loading message count...</p>
+
+    <script>
+        const ac = document.getElementById("aircraftCount");
+        const mc = document.getElementById("messageCount");
+
+        const es = new EventSource("/stats");
+        es.onerror = (err) => {
+            console.log("onerror", err)
+        };
+
+        es.onmessage = (msg) => {
+            console.log("onmessage", msg)
+        };
+
+        es.onopen = (...args) => {
+            console.log("onopen", args)
+        };
+
+        es.addEventListener("metadata", (event) => {
+            const parsedData = JSON.parse(event.data);
+
+            ac.innerText = parsedData.AircraftCount;
+            mc.innerText = parsedData.MessageCount;
+        });
+    </script>
+</body>
+
+</html>
